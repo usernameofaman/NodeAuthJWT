@@ -20,40 +20,26 @@ app.use('/', express.static(path.join(__dirname, 'static')))
 app.use(bodyParser.json())
 
 app.post('/api/register', async (req, res) => {
-	const { username, password: plainTextPassword } = req.body
-
-	if (!username || typeof username !== 'string') {
-		return res.json({ status: 'error', error: 'Invalid username' })
-	}
-
-	if (!plainTextPassword || typeof plainTextPassword !== 'string') {
-		return res.json({ status: 'error', error: 'Invalid password' })
-	}
-
-	if (plainTextPassword.length < 5) {
-		return res.json({
-			status: 'error',
-			error: 'Password too small. Should be atleast 6 characters'
-		})
-	}
-
-	const password = await bcrypt.hash(plainTextPassword, 10)
+	const { email, firstName, lastName, password } = req.body
+	// if (!username || typeof username !== 'string') {
+	// 	return res.json({ status: 'error', error: 'Invalid Email' })
+	// }
 
 	try {
 		const response = await User.create({
-			username,
-			password
+			email, firstName, lastName, password
 		})
 		console.log('User created successfully: ', response)
 	} catch (error) {
 		if (error.code === 11000) {
 			// duplicate key
-			return res.json({ status: 'error', error: 'Username already in use' })
+			console.log(error)
+			return res.json({ status: 'error', error: 'Email already in use' })
 		}
 		throw error
 	}
 
-	res.json({ status: 'ok' })
+	res.json({ status: 'success' })
 })
 
 
@@ -61,28 +47,26 @@ app.post('/api/register', async (req, res) => {
 
 
 //Login API
-app.post('/api/login', async (req, res) => {
-	const { username, password } = req.body
-	const user = await User.findOne({ username }).lean()
+app.post('/login', async (req, res) => {
+	const { email, password } = req.body
+	const user = await User.findOne({ email }).lean()
 
 	if (!user) {
-		return res.json({ status: 'error', error: 'Invalid username/password' })
+		return res.json({ status: 'error', error: 'Invalid email' })
 	}
 
-	if (await bcrypt.compare(password, user.password)) {
-		// the username, password combination is successful
+	// the username, password combination is successful
+	if (user.password === password) {
 
 		const token = jwt.sign(
 			{
 				id: user._id,
-				username: user.username
+				email: user.email
 			},
 			JWT_SECRET
 		)
-
 		return res.json({ status: 'ok', data: token })
 	}
-
 	res.json({ status: 'error', error: 'Invalid username/password' })
 })
 
@@ -120,6 +104,6 @@ app.post('/api/change-password', async (req, res) => {
 	}
 })
 
-app.listen(9999, () => {
-	console.log('Server up at 9999')
+app.listen(5000, () => {
+	console.log('Server up at 5000')
 })
