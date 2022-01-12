@@ -9,8 +9,9 @@ const PORT = 5000;
 
 // We need to save it or payloads will fail
 const JWT_SECRET = 'sdjkfh8923yhjdksbfma@#*(&@*!^#&@bhjb2qiuhesdbhjdsfg839ujkdhfjk'
+const DB = process.env.DB || 'mongodb+srv://macbook:macbook@cluster0.ztfod.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
-mongoose.connect('mongodb+srv://macbook:macbook@cluster0.ztfod.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect(DB, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true
