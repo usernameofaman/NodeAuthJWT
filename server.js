@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const User = require('./model/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const PORT = 5000;
 
 // We need to save it or payloads will fail
 const JWT_SECRET = 'sdjkfh8923yhjdksbfma@#*(&@*!^#&@bhjb2qiuhesdbhjdsfg839ujkdhfjk'
@@ -104,6 +105,7 @@ app.post('/api/change-password', async (req, res) => {
 	}
 })
 
-app.listen(5000, () => {
-	console.log('Server up at 5000')
+app.listen(PORT, () => {
+	console.log(`Server up at ${PORT}`)
+
 })
